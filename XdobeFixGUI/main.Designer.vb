@@ -31,6 +31,7 @@ Partial Class main
         Me.rtbCorrectRevise = New System.Windows.Forms.RichTextBox()
         Me.rtbUncorrectRevise = New System.Windows.Forms.RichTextBox()
         Me.btnNameRevise = New System.Windows.Forms.Button()
+        Me.TabPage2 = New System.Windows.Forms.TabPage()
         Me.btnFindLoc = New System.Windows.Forms.Button()
         Me.TargetLoc = New System.Windows.Forms.TextBox()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -38,10 +39,11 @@ Partial Class main
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.LblNotice = New System.Windows.Forms.Label()
         Me.LnkBuilder = New System.Windows.Forms.LinkLabel()
-        Me.TabPage2 = New System.Windows.Forms.TabPage()
+        Me.Label4 = New System.Windows.Forms.Label()
         Me.tabContainer.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.TableLayoutPanel1.SuspendLayout()
+        Me.TabPage2.SuspendLayout()
         Me.Panel1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -142,6 +144,17 @@ Partial Class main
         Me.btnNameRevise.Text = "이름 교정하기"
         Me.btnNameRevise.UseVisualStyleBackColor = True
         '
+        'TabPage2
+        '
+        Me.TabPage2.Controls.Add(Me.Label4)
+        Me.TabPage2.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage2.Name = "TabPage2"
+        Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage2.Size = New System.Drawing.Size(551, 336)
+        Me.TabPage2.TabIndex = 1
+        Me.TabPage2.Text = "프리셋 한/영 전환"
+        Me.TabPage2.UseVisualStyleBackColor = True
+        '
         'btnFindLoc
         '
         Me.btnFindLoc.Location = New System.Drawing.Point(433, 51)
@@ -210,15 +223,15 @@ Partial Class main
         Me.LnkBuilder.TabStop = True
         Me.LnkBuilder.Text = "LnkBuilder"
         '
-        'TabPage2
+        'Label4
         '
-        Me.TabPage2.Location = New System.Drawing.Point(4, 22)
-        Me.TabPage2.Name = "TabPage2"
-        Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(551, 336)
-        Me.TabPage2.TabIndex = 1
-        Me.TabPage2.Text = "프리셋 한/영 전환"
-        Me.TabPage2.UseVisualStyleBackColor = True
+        Me.Label4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.Label4.Location = New System.Drawing.Point(30, 66)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(456, 183)
+        Me.Label4.TabIndex = 0
+        Me.Label4.Text = "Label4"
+        Me.Label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'main
         '
@@ -236,6 +249,7 @@ Partial Class main
         Me.tabContainer.ResumeLayout(False)
         Me.TabPage1.ResumeLayout(False)
         Me.TableLayoutPanel1.ResumeLayout(False)
+        Me.TabPage2.ResumeLayout(False)
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
         Me.ResumeLayout(False)
@@ -260,4 +274,5 @@ Partial Class main
     Friend WithEvents LblNotice As Label
     Friend WithEvents LnkBuilder As LinkLabel
     Friend WithEvents TabPage2 As TabPage
+    Friend WithEvents Label4 As Label
 End Class

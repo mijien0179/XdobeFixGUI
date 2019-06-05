@@ -74,4 +74,8 @@
     Private Sub LnkBuilder_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles LnkBuilder.LinkClicked
         Process.Start($"{LnkBuilder.Text}?withXdobeFixPrg")
     End Sub
+
+    Private Sub Label4_Click(sender As Object, e As EventArgs) Handles Label4.Click
+        Process.Start(Label4.Tag)
+    End Sub
 End Class

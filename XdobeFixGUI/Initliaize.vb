@@ -48,8 +48,15 @@
             End With
 
             With .LnkBuilder
-                .Text = $"https://pang2h.tistory.com/pages/XdobeFix"
+                .Text = $"https://pang2h.tistory.com/pages/XdobeFixSeries"
 
+            End With
+
+            With .Label4
+                .Location = New Point(.Parent.Width / 2 - .Width / 2, .Parent.Height / 2 - .Height / 2)
+                .Text = $"한영 변환 기능은 XdobeFixSwitch 프로그램으로 분리되었습니다.{w}다음에서 찾을 수 있습니다. {w}{w}https://pang2h.tistory.com/pages/XdobeFixSeries"
+                .Tag = "https://pang2h.tistory.com/pages/XdobeFixSeries"
+                .Cursor = Cursors.Hand
             End With
 
         End With
