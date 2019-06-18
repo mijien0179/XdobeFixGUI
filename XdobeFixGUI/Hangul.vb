@@ -164,8 +164,8 @@
     Public Function StructToStr(ByVal target As List(Of charData), Optional ByVal OptType As StringOption = StringOption.NULL) As String
 
 
-        Dim temp As String = Nothing
-        Dim temp2 As String = Nothing
+        Dim temp As String
+        Dim temp2 As String
         Dim maxLength = target.Count - 1
         If (OptType And StringOption.NULL) Then
             temp = Nothing
@@ -226,7 +226,6 @@
         Dim ret As New List(Of charData)
         Dim maxCount As Integer = target.Count - 1
         Dim temp(1) As charData
-        Dim Last As charState = Nothing
         '// 라이브러리를 쉽게 이용할 수 있도록 리스트를 보내면 알아서 검색해서 보냄
 
         For i = 0 To maxCount
@@ -308,7 +307,7 @@
 
     Public Function Separate(ByVal chr As charData) As List(Of charData)
         Dim ls As New List(Of charData)
-        Dim temp As Integer = Nothing
+        Dim temp As Integer
 
 #Region "예외처리"
         If Not (chr.Type = charState.HanEmjol) Then
