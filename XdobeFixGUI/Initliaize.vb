@@ -6,6 +6,17 @@
 
         Dim prgIco As Icon = FuncBitmapToIco(My.Resources.icon)
         'Program Icon
+        With My.Forms.newMain
+            .Text = My.Application.Info.Title
+            .Icon = prgIco
+
+            With .SearchAdobe
+                .Text = "찾기"
+
+            End With
+
+        End With
+
         With My.Forms.main
             .Text = My.Application.Info.Title
             '.Size = New Size(900, 600)
