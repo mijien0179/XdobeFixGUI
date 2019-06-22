@@ -15,6 +15,16 @@
 
             End With
 
+            With .TaskLabel
+                .ForeColor = Color.Green
+                .Text = $"오른쪽 찾기를 통해 폴더를 추가한 뒤, 원하는 목록을 선택하면 아래 메뉴가 활성화됩니다."
+            End With
+
+            With .ControlPanel
+                .Enabled = False
+            End With
+
+
         End With
 
         With My.Forms.main

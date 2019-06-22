@@ -4,8 +4,8 @@
 '| 
 '| TODO :
 '|      현재 결과를 무엇으로 보여줄지 모르겠음. 고민해봐야지
-'| 
-'| 
+'|      트리뷰로 작성하는 것으로 결론 지음.
+'|      성공 실패 기타 등으로
 '| 
 '| 
 '| 
@@ -35,7 +35,14 @@ Public Class newMain
     Dim presetFileThread As Thread = Nothing
     Private Sub AdobeList_SelectedValueChanged(sender As Object, e As EventArgs) Handles AdobeList.SelectedValueChanged
         With AdobeList
-            Dim idx As Integer = .SelectedIndex
+            Static Dim idx As Integer = -1
+
+            If idx = AdobeList.SelectedIndex Then
+                Exit Sub
+            End If
+
+            idx = AdobeList.SelectedIndex
+
             If idx < 0 Or .Items.Count < idx + 1 Then
                 Exit Sub
             End If
@@ -44,7 +51,6 @@ Public Class newMain
                 ControlPanel.Enabled = True
                 TaskLabel.ForeColor = Color.Blue
                 TaskLabel.Text = $"프리셋 폴더를 찾았습니다."
-
             Else
                 ControlPanel.Enabled = False
                 TaskLabel.ForeColor = Color.Red
@@ -88,40 +94,83 @@ Public Class newMain
     End Sub
 
     Private Sub ModifyFileName(ByVal setting As ModifyFileFunc) '' TODO
-        mainTaskAlert("파일을 찾고 있습니다.")
+        CtrlEnabledSet(Btn_ModifyName, False)
+        mainTaskAlert("교정 작업을 초기화중입니다.")
+        Dim hans As New HangulVB
         Dim src As String = setting.src
         Dim makeLog As Boolean = setting.makeLog
         Dim copyErr As Boolean = setting.copyErrorFile
 
-        If My.Computer.FileSystem.DirectoryExists(src) Then
-            Dim hans As New HangulVB
-            For Each path As String In My.Computer.FileSystem.GetFiles(src, FileIO.SearchOption.SearchAllSubDirectories, "*.ffx")
-                Dim fInfo As IO.FileInfo = My.Computer.FileSystem.GetFileInfo(path)
-                Dim nameData As List(Of HangulVB.charData) = hans.CreateStruct(fInfo.Name)
-                Dim newNameData As String = hans.StructToStr(hans.Combine(nameData))
+        For Each path As String In My.Computer.FileSystem.GetFiles(src, FileIO.SearchOption.SearchAllSubDirectories, "*.ffx")
+            Dim fInfo As IO.FileInfo = My.Computer.FileSystem.GetFileInfo(path)
 
-                RichTbxSet($"{fInfo.Directory.Name}\{fInfo.Name}{fInfo.Extension} >> { _
-                    w}  {fInfo.Directory.Name}\{newNameData}{fInfo.Extension}{w}")
 
-            Next
-        End If
 
+        Next
+
+        mainTaskAlert("교정이 완료되었습니다. 세부 항목은 오른쪽 트리뷰에서 확인할 수 있습니다.")
+        CtrlEnabledSet(Btn_ModifyName, True)
         presetFileThread = Nothing 'REM 스레드 종료 확인
     End Sub
 
-    Delegate Sub D_RichTbxSet(ByVal str As String, ByVal append As Boolean)
-    Private Sub RichTbxSet(ByVal str As String, Optional append As Boolean = True)
-        With rtb
-            If .InvokeRequired Then
-                .Invoke(New D_RichTbxSet(AddressOf RichTbxSet), New Object() {str, append})
-            Else
-                If append Then
-                    rtb.Text &= str
-                Else
-                    rtb.Text = str
+
+
+    Delegate Function D_GetTreeData(ByVal trev As TreeView) As TreeNodeCollection
+    Private Function GetTreeData(ByVal trev As TreeView) As TreeNodeCollection
+
+        If trev.InvokeRequired Then
+            Return trev.Invoke(New D_GetTreeData(AddressOf GetTreeData), New Object() {trev})
+        Else
+            Return trev.Nodes
+        End If
+
+    End Function
+
+    Delegate Sub D_CtrlEnabledSet(ByVal Ctrl As Control, ByVal enable As Boolean)
+    Private Sub CtrlEnabledSet(ByVal ctrl As Control, ByVal enable As Boolean)
+        If ctrl.InvokeRequired Then
+            ctrl.Invoke(New D_CtrlEnabledSet(AddressOf CtrlEnabledSet), New Object() {ctrl, enable})
+        Else
+            ctrl.Enabled = enable
+        End If
+    End Sub
+
+
+    Delegate Sub D_AppendTree(ByVal location As String, ByVal value As String, ByVal bfValue As String)
+    Private Sub AppendTree(ByVal location As String, ByVal value As String, ByVal bfValue As String)
+        If TreeView2.InvokeRequired Then
+            TreeView2.Invoke(New D_AppendTree(AddressOf AppendTree), New Object() {location, value, bfValue})
+        Else
+            Dim tnd As TreeNodeCollection = TreeView2.Nodes
+            Dim nd As TreeNode = Nothing
+            Dim folder As List(Of String) = Split(Mid(location, 2), "\").ToList()
+
+            For i As Integer = 0 To folder.Count - 1
+                Dim k As Integer
+                For k = 0 To tnd.Count - 1
+                    If $"{folder(i)}" = tnd.Item(k).Text Then
+                        nd = tnd.Item(k)
+                        Exit For
+                    End If
+                Next
+                If k = tnd.Count Then
+                    nd = New TreeNode With {
+                        .Text = $"{folder(i)}",
+                        .Name = folder(i)
+                    }
+                    tnd.Add(nd)
                 End If
-            End If
-        End With
+                tnd = nd.Nodes
+
+            Next
+
+            nd = New TreeNode With {
+                .Text = value,
+                .Name = value
+            }
+
+            tnd.Add(nd)
+        End If
     End Sub
 
     Private Sub 폴더열기ToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles 폴더열기ToolStripMenuItem.Click
@@ -217,6 +266,7 @@ Public Class newMain
 
         End If
 
+
         If presetFileThread IsNot Nothing Or searchThread IsNot Nothing Then
             If MsgBox("작업을 중단하고 프로그램을 닫습니다.", MsgBoxStyle.OkCancel + MsgBoxStyle.Information, "알림") = MsgBoxResult.Ok Then
                 If presetFileThread IsNot Nothing Then
@@ -234,6 +284,7 @@ Public Class newMain
                         searchThread = Nothing
                     End If
                 End If
+
             Else
                 e.Cancel = True
                 If searchThread IsNot Nothing AndAlso searchThread.IsAlive Then
@@ -243,11 +294,11 @@ Public Class newMain
                 If presetFileThread IsNot Nothing AndAlso presetFileThread.IsAlive Then
                     presetFileThread.Resume()
                 End If
+
             End If
         End If
 
 
     End Sub
-
 
 End Class
