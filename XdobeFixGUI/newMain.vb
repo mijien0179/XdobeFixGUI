@@ -93,7 +93,7 @@ Public Class newMain
         End With
     End Sub
 
-    Private Sub ModifyFileName(ByVal setting As ModifyFileFunc) '' TODO
+    Private Sub ModifyFileName(ByVal setting As ModifyFileFunc) 'REM TODO
         CtrlEnabledSet(Btn_ModifyName, False)
         mainTaskAlert("교정 작업을 초기화중입니다.")
         Dim hans As New HangulVB
@@ -103,6 +103,29 @@ Public Class newMain
 
         For Each path As String In My.Computer.FileSystem.GetFiles(src, FileIO.SearchOption.SearchAllSubDirectories, "*.ffx")
             Dim fInfo As IO.FileInfo = My.Computer.FileSystem.GetFileInfo(path)
+
+            Dim nameData As List(Of HangulVB.charData) = hans.CreateStruct(fInfo.Name)
+            If hans.IsHangul(nameData) Then
+                Dim newNameData As String = hans.StructToStr(hans.Combine(nameData))
+                If path = Replace(path, fInfo.Name, newNameData) Then
+                    'REM 변경 불가
+                    'REM 동일한 파일 명
+
+                    Continue For
+                End If
+                Try
+                    If Not My.Computer.FileSystem.FileExists(path) Then
+
+                    End If
+                    My.Computer.FileSystem.RenameFile(path, $"{newNameData}{fInfo.Extension}")
+                    'REM 변경 성공
+
+                Catch ex As Exception
+
+                End Try
+
+            End If
+
 
 
 
