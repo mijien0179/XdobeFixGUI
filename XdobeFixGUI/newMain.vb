@@ -98,40 +98,98 @@ Public Class newMain
         mainTaskAlert("교정 작업을 초기화중입니다.")
         Dim hans As New HangulVB
         Dim src As String = setting.src
-        Dim makeLog As Boolean = setting.makeLog
-        Dim copyErr As Boolean = setting.copyErrorFile
+        Dim makeLog As Boolean = setting.makeLog        ' 로그를 만들지 여부 선택
+        Dim copyErr As Boolean = setting.copyErrorFile  ' 오류가 있는 파일을 복사함
+        Dim count As Integer = 0
+        Dim logName As String = $"XdobeLog-{Now.Hour}{Now.Minute}{Now.Second}.log"
+        Dim dicName As String = $"XdobeErrFile-{Now.Hour}{Now.Minute}{Now.Second}"
+        Dim err As Boolean = False
+        If makeLog Then
+            My.Computer.FileSystem.WriteAllText($"{My.Application.Info.DirectoryPath}\{logName}", $"OS : {Environment.OSVersion.ToString}{w}", True)
+            My.Computer.FileSystem.WriteAllText($"{My.Application.Info.DirectoryPath}\{logName}", $"===================================={w}", True)
+        End If
 
+        Dim cpy As Boolean = True
         For Each path As String In My.Computer.FileSystem.GetFiles(src, FileIO.SearchOption.SearchAllSubDirectories, "*.ffx")
             Dim fInfo As IO.FileInfo = My.Computer.FileSystem.GetFileInfo(path)
-
+            cpy = True
             Dim nameData As List(Of HangulVB.charData) = hans.CreateStruct(fInfo.Name)
             If hans.IsHangul(nameData) Then
                 Dim newNameData As String = hans.StructToStr(hans.Combine(nameData))
                 If path = Replace(path, fInfo.Name, newNameData) Then
-                    'REM 변경 불가
+                    'REM 기타
                     'REM 동일한 파일 명
+                    AppendTree("기타", "변경 없음", Replace(fInfo.Directory.FullName, src, ""), newNameData, $"파일명이 이전과 동일해 작업하지 않습니다.{w}실제 파일명 : {fInfo.Name}")
+                    If makeLog Then
+                        My.Computer.FileSystem.WriteAllText($"{My.Application.Info.DirectoryPath}\{logName}", $"[기타]변경 없음-${Replace(fInfo.Directory.FullName, src, "")}{newNameData}{w}", True)
+
+                    End If
+                    mainTaskAlert($"교정 진행중 : {count}개")
+                    count += 1
 
                     Continue For
                 End If
                 Try
                     If Not My.Computer.FileSystem.FileExists(path) Then
+                        AppendTree("실패", "파일 없음", Replace(fInfo.Directory.FullName, src, ""), newNameData, $"작업 도중 파일이 존재하지 않아 중단되었습니다.{w}실제 파일명 : {fInfo.Name}")
+                        If makeLog Then
+                            My.Computer.FileSystem.WriteAllText($"{My.Application.Info.DirectoryPath}\{logName}", $"[실패]파일 없음-${Replace(fInfo.Directory.FullName, src, "")}{newNameData}{w}", True)
+
+                        End If
+                        err = True
+                        'REM 실패
+                        'REM 파일 존재 X
 
                     End If
                     My.Computer.FileSystem.RenameFile(path, $"{newNameData}{fInfo.Extension}")
+                    AppendTree("성공", Nothing, Replace(fInfo.Directory.FullName, src, ""), newNameData, $"변경 작업이 성공적으로 이루어졌습니다.{w}실제 파일명 : {fInfo.Name}")
+                    If makeLog Then
+                        My.Computer.FileSystem.WriteAllText($"{My.Application.Info.DirectoryPath}\{logName}", $"[성공]-${Replace(fInfo.Directory.FullName, src, "")}{newNameData}{w}", True)
+
+                    End If
+                    'REM 성공
                     'REM 변경 성공
+                    cpy = False
 
                 Catch ex As Exception
+                    'REM 실패
+                    Select Case ex.HResult
+                        Case &H80070005
+                            AppendTree("실패", "권한 없음", Replace(fInfo.Directory.FullName, src, ""), newNameData, $"프로그램에 파일 명을 변경할 권한이 존재하지 않습니다. 관리자 권한으로 프로그램을 시작하세요.{w} 실제 파일명 : {fInfo.Name}")
+                            If makeLog Then
+                                My.Computer.FileSystem.WriteAllText($"{My.Application.Info.DirectoryPath}\{logName}", $"[실패]권한 없음-${Replace(fInfo.Directory.FullName, src, "")}{newNameData}{w}", True)
+
+                            End If
+                        Case Else
+                            AppendTree("실패", "알 수 없음", Replace(fInfo.Directory.FullName, src, ""), newNameData, $"알려지지 않은 문제입니다. 버그 리포트를 위해 제작자에게 알려주시면 감사하겠습니다. {w} 실제 파일명 : {fInfo.Name}{w}{ex.ToString}")
+                            If makeLog Then
+                                My.Computer.FileSystem.WriteAllText($"{My.Application.Info.DirectoryPath}\{logName}", $"[실패]알 수 없음-${Replace(fInfo.Directory.FullName, src, "")}{newNameData}{w}", True)
+                                My.Computer.FileSystem.WriteAllText($"{My.Application.Info.DirectoryPath}\{logName}", $"{Chr(9)}{ex.ToString}{w}", True)
+
+                            End If
+
+                    End Select
+                    err = True
 
                 End Try
 
             End If
 
-
-
-
+            If cpy Then
+                If Not My.Computer.FileSystem.DirectoryExists($"{Replace(fInfo.Directory.FullName, src, $"{My.Application.Info.DirectoryPath}\{dicName}")}") Then
+                    My.Computer.FileSystem.CreateDirectory($"{Replace(fInfo.Directory.FullName, src, $"{My.Application.Info.DirectoryPath}\{dicName}")}")
+                End If
+                My.Computer.FileSystem.CopyFile(fInfo.FullName, $"{Replace(fInfo.FullName, src, $"{My.Application.Info.DirectoryPath}\{dicName}")}")
+            End If
+            mainTaskAlert($"교정 진행중 : {count}개")
+            count += 1
         Next
+        If err Then
+            mainTaskAlert("교정이 완료되었습니다. 오류로 인해 수정되지 않은 항목이 존재합니다. 오른쪽 트리뷰에서 확인할 수 있습니다.")
 
-        mainTaskAlert("교정이 완료되었습니다. 세부 항목은 오른쪽 트리뷰에서 확인할 수 있습니다.")
+        Else
+            mainTaskAlert("교정이 완료되었습니다. 세부 항목은 오른쪽 트리뷰에서 확인할 수 있습니다.")
+        End If
         CtrlEnabledSet(Btn_ModifyName, True)
         presetFileThread = Nothing 'REM 스레드 종료 확인
     End Sub
@@ -158,43 +216,41 @@ Public Class newMain
         End If
     End Sub
 
-
-    Delegate Sub D_AppendTree(ByVal location As String, ByVal value As String, ByVal bfValue As String)
-    Private Sub AppendTree(ByVal location As String, ByVal value As String, ByVal bfValue As String)
+    Delegate Sub D_AppendTree(ByVal root As String, ByVal subtree As String, ByVal location As String, ByVal name As String, ByVal tag As String)
+    Private Sub AppendTree(ByVal root As String, ByVal subtree As String, ByVal location As String, ByVal name As String, ByVal tag As String)
         If TreeView2.InvokeRequired Then
-            TreeView2.Invoke(New D_AppendTree(AddressOf AppendTree), New Object() {location, value, bfValue})
+            TreeView2.Invoke(New D_AppendTree(AddressOf AppendTree), New Object() {root, subtree, location, name, tag})
         Else
             Dim tnd As TreeNodeCollection = TreeView2.Nodes
             Dim nd As TreeNode = Nothing
-            Dim folder As List(Of String) = Split(Mid(location, 2), "\").ToList()
 
-            For i As Integer = 0 To folder.Count - 1
-                Dim k As Integer
-                For k = 0 To tnd.Count - 1
-                    If $"{folder(i)}" = tnd.Item(k).Text Then
-                        nd = tnd.Item(k)
+            For i As Integer = 0 To tnd.Count - 1
+                If tnd.Item(i).Text = root Then
+                    nd = tnd.Item(i)
+                    tnd = nd.Nodes
+                    Exit For
+                End If
+            Next
+
+            If Not (subtree = Nothing) Then
+                For i As Integer = 0 To tnd.Count - 1
+                    If tnd.Item(i).Text = subtree Then
+                        nd = tnd.Item(i)
+                        tnd = nd.Nodes
                         Exit For
                     End If
                 Next
-                If k = tnd.Count Then
-                    nd = New TreeNode With {
-                        .Text = $"{folder(i)}",
-                        .Name = folder(i)
-                    }
-                    tnd.Add(nd)
-                End If
-                tnd = nd.Nodes
-
-            Next
+            End If
 
             nd = New TreeNode With {
-                .Text = value,
-                .Name = value
+                .Text = $"{location}\{name}",
+                .Name = name,
+                .Tag = tag
             }
-
             tnd.Add(nd)
         End If
     End Sub
+
 
     Private Sub 폴더열기ToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles 폴더열기ToolStripMenuItem.Click
         Dim idx As Integer = AdobeList.SelectedIndex
@@ -324,4 +380,7 @@ Public Class newMain
 
     End Sub
 
+    Private Sub TreeView2_NodeMouseClick(sender As Object, e As TreeNodeMouseClickEventArgs) Handles TreeView2.NodeMouseClick
+        RichTextBox1.Text = e.Node.Tag
+    End Sub
 End Class

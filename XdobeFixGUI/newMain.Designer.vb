@@ -26,13 +26,14 @@ Partial Class newMain
         Dim TreeNode1 As System.Windows.Forms.TreeNode = New System.Windows.Forms.TreeNode("성공")
         Dim TreeNode2 As System.Windows.Forms.TreeNode = New System.Windows.Forms.TreeNode("파일 없음")
         Dim TreeNode3 As System.Windows.Forms.TreeNode = New System.Windows.Forms.TreeNode("권한 없음")
-        Dim TreeNode4 As System.Windows.Forms.TreeNode = New System.Windows.Forms.TreeNode("동일 파일명")
-        Dim TreeNode5 As System.Windows.Forms.TreeNode = New System.Windows.Forms.TreeNode("알 수 없음")
-        Dim TreeNode6 As System.Windows.Forms.TreeNode = New System.Windows.Forms.TreeNode("실패", New System.Windows.Forms.TreeNode() {TreeNode2, TreeNode3, TreeNode4, TreeNode5})
-        Dim TreeNode7 As System.Windows.Forms.TreeNode = New System.Windows.Forms.TreeNode("변경 없음")
-        Dim TreeNode8 As System.Windows.Forms.TreeNode = New System.Windows.Forms.TreeNode("기타", New System.Windows.Forms.TreeNode() {TreeNode7})
+        Dim TreeNode4 As System.Windows.Forms.TreeNode = New System.Windows.Forms.TreeNode("알 수 없음")
+        Dim TreeNode5 As System.Windows.Forms.TreeNode = New System.Windows.Forms.TreeNode("실패", New System.Windows.Forms.TreeNode() {TreeNode2, TreeNode3, TreeNode4})
+        Dim TreeNode6 As System.Windows.Forms.TreeNode = New System.Windows.Forms.TreeNode("변경 없음")
+        Dim TreeNode7 As System.Windows.Forms.TreeNode = New System.Windows.Forms.TreeNode("기타", New System.Windows.Forms.TreeNode() {TreeNode6})
         Me.ControlPanel = New System.Windows.Forms.Panel()
+        Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.TreeView2 = New System.Windows.Forms.TreeView()
+        Me.RichTextBox1 = New System.Windows.Forms.RichTextBox()
         Me.Btn_ModifyName = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.CheckBox2 = New System.Windows.Forms.CheckBox()
@@ -51,18 +52,16 @@ Partial Class newMain
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.도움말ToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.정보ToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
-        Me.RichTextBox1 = New System.Windows.Forms.RichTextBox()
         Me.ControlPanel.SuspendLayout()
+        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SplitContainer1.Panel1.SuspendLayout()
+        Me.SplitContainer1.Panel2.SuspendLayout()
+        Me.SplitContainer1.SuspendLayout()
         Me.SelectorPanel.SuspendLayout()
         Me.CMS_AdobeList.SuspendLayout()
         Me.CMS_Search.SuspendLayout()
         Me.StatusStrip1.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
-        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer1.Panel1.SuspendLayout()
-        Me.SplitContainer1.Panel2.SuspendLayout()
-        Me.SplitContainer1.SuspendLayout()
         Me.SuspendLayout()
         '
         'ControlPanel
@@ -78,6 +77,22 @@ Partial Class newMain
         Me.ControlPanel.Size = New System.Drawing.Size(784, 433)
         Me.ControlPanel.TabIndex = 1
         '
+        'SplitContainer1
+        '
+        Me.SplitContainer1.Location = New System.Drawing.Point(17, 31)
+        Me.SplitContainer1.Name = "SplitContainer1"
+        '
+        'SplitContainer1.Panel1
+        '
+        Me.SplitContainer1.Panel1.Controls.Add(Me.TreeView2)
+        '
+        'SplitContainer1.Panel2
+        '
+        Me.SplitContainer1.Panel2.Controls.Add(Me.RichTextBox1)
+        Me.SplitContainer1.Size = New System.Drawing.Size(755, 350)
+        Me.SplitContainer1.SplitterDistance = 456
+        Me.SplitContainer1.TabIndex = 10
+        '
         'TreeView2
         '
         Me.TreeView2.Dock = System.Windows.Forms.DockStyle.Fill
@@ -89,19 +104,29 @@ Partial Class newMain
         TreeNode2.Text = "파일 없음"
         TreeNode3.Name = "UnauthorizeNode"
         TreeNode3.Text = "권한 없음"
-        TreeNode4.Name = "SmeFleNameNode"
-        TreeNode4.Text = "동일 파일명"
-        TreeNode5.Name = "etcErrorNode"
-        TreeNode5.Text = "알 수 없음"
-        TreeNode6.Name = "FailNode"
-        TreeNode6.Text = "실패"
-        TreeNode7.Name = "NoChangeNode"
-        TreeNode7.Text = "변경 없음"
-        TreeNode8.Name = "etcNode"
-        TreeNode8.Text = "기타"
-        Me.TreeView2.Nodes.AddRange(New System.Windows.Forms.TreeNode() {TreeNode1, TreeNode6, TreeNode8})
+        TreeNode4.Name = "etcErrorNode"
+        TreeNode4.Text = "알 수 없음"
+        TreeNode5.Name = "FailNode"
+        TreeNode5.Text = "실패"
+        TreeNode6.Name = "NoChangeNode"
+        TreeNode6.Text = "변경 없음"
+        TreeNode7.Name = "etcNode"
+        TreeNode7.Text = "기타"
+        Me.TreeView2.Nodes.AddRange(New System.Windows.Forms.TreeNode() {TreeNode1, TreeNode5, TreeNode7})
         Me.TreeView2.Size = New System.Drawing.Size(456, 350)
         Me.TreeView2.TabIndex = 0
+        '
+        'RichTextBox1
+        '
+        Me.RichTextBox1.BackColor = System.Drawing.Color.White
+        Me.RichTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.RichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.RichTextBox1.Location = New System.Drawing.Point(0, 0)
+        Me.RichTextBox1.Name = "RichTextBox1"
+        Me.RichTextBox1.ReadOnly = True
+        Me.RichTextBox1.Size = New System.Drawing.Size(295, 350)
+        Me.RichTextBox1.TabIndex = 0
+        Me.RichTextBox1.Text = ""
         '
         'Btn_ModifyName
         '
@@ -255,34 +280,6 @@ Partial Class newMain
         Me.정보ToolStripMenuItem.Size = New System.Drawing.Size(98, 22)
         Me.정보ToolStripMenuItem.Text = "정보"
         '
-        'SplitContainer1
-        '
-        Me.SplitContainer1.Location = New System.Drawing.Point(17, 31)
-        Me.SplitContainer1.Name = "SplitContainer1"
-        '
-        'SplitContainer1.Panel1
-        '
-        Me.SplitContainer1.Panel1.Controls.Add(Me.TreeView2)
-        '
-        'SplitContainer1.Panel2
-        '
-        Me.SplitContainer1.Panel2.Controls.Add(Me.RichTextBox1)
-        Me.SplitContainer1.Size = New System.Drawing.Size(755, 350)
-        Me.SplitContainer1.SplitterDistance = 456
-        Me.SplitContainer1.TabIndex = 10
-        '
-        'RichTextBox1
-        '
-        Me.RichTextBox1.BackColor = System.Drawing.Color.White
-        Me.RichTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.RichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.RichTextBox1.Location = New System.Drawing.Point(0, 0)
-        Me.RichTextBox1.Name = "RichTextBox1"
-        Me.RichTextBox1.ReadOnly = True
-        Me.RichTextBox1.Size = New System.Drawing.Size(295, 350)
-        Me.RichTextBox1.TabIndex = 0
-        Me.RichTextBox1.Text = ""
-        '
         'newMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 12.0!)
@@ -301,6 +298,10 @@ Partial Class newMain
         Me.Text = "newMain"
         Me.ControlPanel.ResumeLayout(False)
         Me.ControlPanel.PerformLayout()
+        Me.SplitContainer1.Panel1.ResumeLayout(False)
+        Me.SplitContainer1.Panel2.ResumeLayout(False)
+        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainer1.ResumeLayout(False)
         Me.SelectorPanel.ResumeLayout(False)
         Me.CMS_AdobeList.ResumeLayout(False)
         Me.CMS_Search.ResumeLayout(False)
@@ -308,10 +309,6 @@ Partial Class newMain
         Me.StatusStrip1.PerformLayout()
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
-        Me.SplitContainer1.Panel1.ResumeLayout(False)
-        Me.SplitContainer1.Panel2.ResumeLayout(False)
-        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.SplitContainer1.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
