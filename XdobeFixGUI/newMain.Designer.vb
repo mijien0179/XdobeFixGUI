@@ -277,7 +277,7 @@ Partial Class newMain
         '정보ToolStripMenuItem
         '
         Me.정보ToolStripMenuItem.Name = "정보ToolStripMenuItem"
-        Me.정보ToolStripMenuItem.Size = New System.Drawing.Size(98, 22)
+        Me.정보ToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.정보ToolStripMenuItem.Text = "정보"
         '
         'newMain

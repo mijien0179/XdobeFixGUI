@@ -167,7 +167,12 @@ Public Class newMain
                                 My.Computer.FileSystem.WriteAllText($"{My.Application.Info.DirectoryPath}\{logName}", $"{Chr(9)}{ex.ToString}{w}", True)
 
                             End If
-
+                            If cpy Then
+                                If Not My.Computer.FileSystem.DirectoryExists($"{Replace(fInfo.Directory.FullName, src, $"{My.Application.Info.DirectoryPath}\{dicName}")}") Then
+                                    My.Computer.FileSystem.CreateDirectory($"{Replace(fInfo.Directory.FullName, src, $"{My.Application.Info.DirectoryPath}\{dicName}")}")
+                                End If
+                                My.Computer.FileSystem.CopyFile(fInfo.FullName, $"{Replace(fInfo.FullName, src, $"{My.Application.Info.DirectoryPath}\{dicName}")}")
+                            End If
                     End Select
                     err = True
 
@@ -175,12 +180,7 @@ Public Class newMain
 
             End If
 
-            If cpy Then
-                If Not My.Computer.FileSystem.DirectoryExists($"{Replace(fInfo.Directory.FullName, src, $"{My.Application.Info.DirectoryPath}\{dicName}")}") Then
-                    My.Computer.FileSystem.CreateDirectory($"{Replace(fInfo.Directory.FullName, src, $"{My.Application.Info.DirectoryPath}\{dicName}")}")
-                End If
-                My.Computer.FileSystem.CopyFile(fInfo.FullName, $"{Replace(fInfo.FullName, src, $"{My.Application.Info.DirectoryPath}\{dicName}")}")
-            End If
+
             mainTaskAlert($"교정 진행중 : {count}개")
             count += 1
         Next
@@ -382,5 +382,9 @@ Public Class newMain
 
     Private Sub TreeView2_NodeMouseClick(sender As Object, e As TreeNodeMouseClickEventArgs) Handles TreeView2.NodeMouseClick
         RichTextBox1.Text = e.Node.Tag
+    End Sub
+
+    Private Sub 도움말ToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles 도움말ToolStripMenuItem.Click
+        Process.Start("https://pang2h.tistory.com/231")
     End Sub
 End Class
